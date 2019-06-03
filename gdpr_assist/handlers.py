@@ -24,8 +24,3 @@ def handle_pre_delete(sender, instance, using, **kwargs):
     if sender in registry or sender in registry.watching_on_delete:
         return anonymise_related_objects(instance)
 
-
-@receiver(post_delete)
-def handle_post_delete(sender, instance, using, **kwargs):
-    if sender in registry:
-        instance._log_gdpr_delete()

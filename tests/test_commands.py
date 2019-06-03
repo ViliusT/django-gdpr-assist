@@ -89,36 +89,3 @@ class TestAnonymiseCommand(CommandTestCase):
             'Database anonymisation is not enabled',
             str(cm.exception),
         )
-
-
-class TestRerunCommand(CommandTestCase):
-    def test_gdpr_delete__deletes_object(self):
-        obj_1 = ModelWithPrivacyMeta.objects.create(
-            chars='test',
-            email='test@example.com',
-        )
-
-        # Log deletion without deleting to simulate deletion and db restore
-        obj_1._log_gdpr_delete()
-
-        self.run_command('gdpr_rerun')
-
-        self.assertEqual(ModelWithPrivacyMeta.objects.count(), 0)
-
-    def test_gdpr_anonymise__anonymises_object(self):
-        obj_1 = ModelWithPrivacyMeta.objects.create(
-            chars='test',
-            email='test@example.com',
-            anonymised=False,
-        )
-
-        # Log anonymise without anonymising to simulate deletion and db restore
-        obj_1._log_gdpr_anonymise()
-
-        self.run_command('gdpr_rerun')
-
-        self.assertEqual(ModelWithPrivacyMeta.objects.count(), 1)
-        obj_1.refresh_from_db()
-        self.assertTrue(obj_1.anonymised)
-        self.assertEqual(obj_1.chars, six.text_type(obj_1.pk))
-        self.assertEqual(obj_1.email, '{}@anon.example.com'.format(obj_1.pk))

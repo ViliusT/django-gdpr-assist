@@ -92,9 +92,7 @@ def runtests(args):
                     DATABASE[key] = os.environ['DATABASE_' + key]
         SETTINGS['DATABASES'] = {
             'default': DATABASE,
-            'gdpr_log': GDPR_DATABASE,
         }
-        SETTINGS['DATABASE_ROUTERS'] = ['gdpr_assist.routers.EventLogRouter']
 
         # Configure
         settings.configure(**SETTINGS)

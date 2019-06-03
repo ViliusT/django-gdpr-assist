@@ -205,17 +205,9 @@ class PrivacyModel(models.Model):
             )
             anonymiser(self)
 
-        # Log the obj class and pk
-        self._log_gdpr_anonymise()
-
         self.save()
         post_anonymise.send(sender=self.__class__, instance=self)
 
-    def _log_gdpr_delete(self):
-        EventLog.objects.log_delete(self)
-
-    def _log_gdpr_anonymise(self):
-        EventLog.objects.log_anonymise(self)
 
     @classmethod
     def _cast_class(cls, model, privacy_meta):
@@ -250,45 +242,3 @@ class PrivacyModel(models.Model):
         abstract = True
 
 
-class EventLogManager(models.Manager):
-    def log_delete(self, instance):
-        self.log(self.model.EVENT_DELETE, instance)
-
-    def log_anonymise(self, instance):
-        self.log(self.model.EVENT_ANONYMISE, instance)
-
-    def log(self, event, instance):
-        cls = instance.__class__
-        self.create(
-            event=event,
-            app_label=cls._meta.app_label,
-            model_name=cls._meta.object_name,
-            target_pk=instance.pk,
-        )
-
-
-class EventLog(models.Model):
-    EVENT_DELETE = 'delete'
-    EVENT_ANONYMISE = 'anonymise'
-    EVENT_CHOICES = (
-        (EVENT_DELETE, _("Delete")),
-        (EVENT_ANONYMISE, _("Anonymise")),
-    )
-
-    event = models.CharField(
-        max_length=max((len(k) for k, v in EVENT_CHOICES)),
-        choices=EVENT_CHOICES,
-    )
-    app_label = models.CharField(max_length=255)
-    model_name = models.CharField(max_length=255)
-    target_pk = models.TextField()
-
-    objects = EventLogManager()
-
-    def get_target(self):
-        model = apps.get_model(self.app_label, self.model_name)
-        try:
-            obj = model._base_manager.get(pk=self.target_pk)
-        except model.DoesNotExist:
-            return None
-        return obj

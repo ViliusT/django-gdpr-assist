@@ -15,6 +15,12 @@ https://github.com/wildfish/django-gdpr-assist
 .. image:: https://readthedocs.org/projects/django-gdpr-assist/badge/?version=latest
     :target: https://django-gdpr-assist.readthedocs.io/en/latest/?badge=latest
 
+
+Fork differences
+================
+Removes the secondary database, anonymization event logger and ``gdpr_rerun`` command.
+No need to set up databases in config / use router.
+
 Features
 ========
 
@@ -42,7 +48,7 @@ Quickstart
 ==========
 
 Install with ``pip install django-gdpr-assist``, add ``gdpr_assist`` to
-Django's ``INSTALLED_APPS`` and add a ``gdpr_log`` definition to ``DATABASES``.
+Django's ``INSTALLED_APPS``.
 
 Then start adding privacy metadata to your models::
 
@@ -62,7 +68,5 @@ deletion of a related model to trigger anonymisation of your model, and can
 manually register a ``PrivacyMeta`` for third-party models without modifying
 their code.
 
-Anonymisation and deletion events for models registered with gdpr-assist are
-logged for replay after a backup restoration with the ``gdpr_rerun`` management
-command. When you need to work with a copy of the production data, there is
+When you need to work with a copy of the production data, there is
 also the ``anonymise_db`` command, which will anonymise the whole database.

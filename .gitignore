@@ -2,6 +2,7 @@
 *.egg-info
 .tox
 .coverage*
+.idea/*
 htmlcov
 docs/_*
 build

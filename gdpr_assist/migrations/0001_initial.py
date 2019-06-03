@@ -23,14 +23,4 @@ class Migration(migrations.Migration):
                 'managed': False,
             },
         ),
-        migrations.CreateModel(
-            name='EventLog',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('event', models.CharField(choices=[('delete', 'Delete'), ('anonymise', 'Anonymise')], max_length=9)),
-                ('app_label', models.CharField(max_length=255)),
-                ('model_name', models.CharField(max_length=255)),
-                ('target_pk', models.TextField()),
-            ],
-        ),
     ]
